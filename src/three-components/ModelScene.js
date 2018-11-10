@@ -91,6 +91,9 @@ export default class ModelScene extends Scene {
     const skysphereMat = new MeshBasicMaterial(
         {side: BackSide, color: 0xffffff, depthTest: false, depthWrite: false});
     this.skysphere = new Mesh(skysphereGeo, skysphereMat);
+    // Ensure the skysphere is rendered before anything else due to
+    // depthTest=false
+    this.skysphere.renderOrder = 1;
 
     this.add(this.pivot);
     this.add(this.light);
@@ -261,6 +264,10 @@ export default class ModelScene extends Scene {
    */
   onModelLoad() {
     this.applyRoomSize();
+
+    // Ensure the model renders after the skysphere
+    this.model.traverse(obj => obj.renderOrder = 1000);
+
     this.dispatchEvent({type: 'model-load'});
   }
 
